@@ -9,7 +9,7 @@
 
     <ui:define name="page">
 
-        <h:form>
+        <h:form id="reg">
             <p:panelGrid columns="1" >
             <p:panelGrid columns="3" id="panel">
                 <p:outputLabel for="name" value="Name:"/>
@@ -34,8 +34,11 @@
                 <p:password id="password2" required="true" requiredMessage="Passowrd cannot be empty"/>
                 <p:message for="password2" display="password2"/>
             </p:panelGrid> 
+                <p:panelGrid columns="2" layout="grid">
+                    <p:commandButton value="Submit" update="panel" action="#{user.register}"/>
+                    <p:link value="Home Page" href="index.xhtml"/>
+                </p:panelGrid>
                 
-                <p:commandButton value="Submit" update="panel" action="#{user.register}"/>
             </p:panelGrid>
         </h:form>     
 

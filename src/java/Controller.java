@@ -1,6 +1,8 @@
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Row;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,6 +36,7 @@ public class Controller {
             session = cluster.connect();
             session.execute("CREATE KEYSPACE IF NOT EXISTS " + dbName + " WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }");
             session.execute("use " + dbName);
+            session.execute(userTable);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -45,23 +48,56 @@ public class Controller {
     }
 
     public static void insertUsers(String sql) {
-       // String user;
-       // for (int i = 1; i <= 10; i++) {
         try
         {
                         session.execute(sql);
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            if(cluster!=null)
-                cluster.close();
         }
-       // }
     }
     
     public static void colseConnection()
     {
         session.close();
         cluster.close();
+    }
+
+   public static boolean signIn(String cql, String password) 
+    {
+        ResultSet res =session.execute(cql);
+        Row r = res.one();
+        if(r==null)
+            return false;
+        else
+        {
+            String pass = r.getString("password");
+            if(pass.equals(password))
+                return true;
+            else
+                return false;
+        }
+    }
+   
+   public static boolean isValidUsername(String cql) 
+    {
+        ResultSet res =session.execute(cql);
+        Row r = res.one();
+        if(r==null)
+            return true;
+        else
+                return false;
+    }
+
+    public static String retreivePassword(String cql) {
+        ResultSet res =session.execute(cql);
+        Row r = res.one();
+        if(r==null)
+            return "username does not exist";
+        else
+        {
+            String pass = r.getString("password");
+             return pass;
+        }
     }
 }
